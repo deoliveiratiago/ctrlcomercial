@@ -26,8 +26,7 @@ public class Categoria implements Serializable {
 	private List<Produto> produtos = new ArrayList<>();
 	//	produtos eh o nome do papel na modelagem
 
-	public Categoria() {
-	}
+	public Categoria() {}
 
 	public Categoria(Integer id, String nome) {
 		super();
