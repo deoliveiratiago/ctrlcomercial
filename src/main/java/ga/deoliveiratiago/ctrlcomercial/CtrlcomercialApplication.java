@@ -1,5 +1,6 @@
 package ga.deoliveiratiago.ctrlcomercial;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +13,20 @@ import ga.deoliveiratiago.ctrlcomercial.domain.Cidade;
 import ga.deoliveiratiago.ctrlcomercial.domain.Cliente;
 import ga.deoliveiratiago.ctrlcomercial.domain.Endereco;
 import ga.deoliveiratiago.ctrlcomercial.domain.Estado;
+import ga.deoliveiratiago.ctrlcomercial.domain.Pagamento;
+import ga.deoliveiratiago.ctrlcomercial.domain.PagamentoBoleto;
+import ga.deoliveiratiago.ctrlcomercial.domain.PagamentoCartao;
+import ga.deoliveiratiago.ctrlcomercial.domain.Pedido;
 import ga.deoliveiratiago.ctrlcomercial.domain.Produto;
+import ga.deoliveiratiago.ctrlcomercial.domain.enums.EstadoPagamento;
 import ga.deoliveiratiago.ctrlcomercial.domain.enums.TipoCliente;
 import ga.deoliveiratiago.ctrlcomercial.repositories.CategoriaRepository;
 import ga.deoliveiratiago.ctrlcomercial.repositories.CidadeRepository;
 import ga.deoliveiratiago.ctrlcomercial.repositories.ClienteRepository;
 import ga.deoliveiratiago.ctrlcomercial.repositories.EnderecoRepository;
 import ga.deoliveiratiago.ctrlcomercial.repositories.EstadoRepository;
+import ga.deoliveiratiago.ctrlcomercial.repositories.PagamentoRepository;
+import ga.deoliveiratiago.ctrlcomercial.repositories.PedidoRepository;
 import ga.deoliveiratiago.ctrlcomercial.repositories.ProdutoRepository;
 
 @SpringBootApplication
@@ -41,6 +49,12 @@ public class CtrlcomercialApplication implements CommandLineRunner {
 	
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+	
+	@Autowired
+	private PedidoRepository pedidoRepository;
+	
+	@Autowired
+	private PagamentoRepository pagamentoRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(CtrlcomercialApplication.class, args);
@@ -90,6 +104,20 @@ public class CtrlcomercialApplication implements CommandLineRunner {
 		clienteRepository.saveAll(Arrays.asList(cli1));
 		enderecoRepository.saveAll(Arrays.asList(en1, en2));
 		
+		SimpleDateFormat data = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+		
+		Pedido ped1 = new Pedido(null, data.parse("30/04/2018 12:01"), cli1, en2);
+		Pedido ped2 = new Pedido(null, data.parse("03/06/2013 15:21"), cli1, en1);
+		
+		Pagamento pgto1 = new PagamentoCartao(null, EstadoPagamento.QUITADO, ped1, 2);
+		ped1.setPagamento(pgto1);
+		Pagamento pgto2 = new PagamentoBoleto(null, EstadoPagamento.PENDENTE, ped2, data.parse("03/09/2016 11:41"), null);
+		ped2.setPagamento(pgto2);
+		
+		cli1.getPedidos().addAll(Arrays.asList(ped1, ped2));
+		
+		pedidoRepository.saveAll(Arrays.asList(ped1, ped2));
+		pagamentoRepository.saveAll(Arrays.asList(pgto1, pgto2));
 		
 	}
 
