@@ -1,6 +1,8 @@
 package ga.deoliveiratiago.ctrlcomercial.resources;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import ga.deoliveiratiago.ctrlcomercial.domain.Categoria;
+import ga.deoliveiratiago.ctrlcomercial.dto.CategoriaDTO;
 import ga.deoliveiratiago.ctrlcomercial.services.CategoriaService;
 
 @RestController
@@ -43,13 +46,18 @@ public class CategoriaResource {
 		obj.setId(id);
 		obj = service.update(obj);
 		return ResponseEntity.noContent().build();
-		
 	}
 
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		service.delete(id);
 		return ResponseEntity.noContent().build();
-		
+	}
+	
+	@RequestMapping(method=RequestMethod.GET)
+	public ResponseEntity<?> findAll() {
+		List<Categoria> list = service.findAll();
+		List<CategoriaDTO> listDto = list.stream().map(obj -> new CategoriaDTO(obj)).collect(Collectors.toList());
+		return ResponseEntity.ok().body(listDto);
 	}
 }
